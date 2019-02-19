@@ -54,14 +54,14 @@ export default {
     let simplex;
     let rayProps;
 
-    function setup() {
-      createCanvas();
-      resize();
-      initRays();
-      draw();
+    this.setup = () => {
+      this.createCanvas();
+      this.resize();
+      this.initRays();
+      this.draw();
     }
 
-    function initRays() {
+    this.initRays = () => {
       tick = 0;
       simplex = new SimplexNoise();
       rayProps = new Float32Array(rayPropsLength);
@@ -69,11 +69,11 @@ export default {
       let i;
 
       for (i = 0; i < rayPropsLength; i += rayPropCount) {
-        initRay(i);
+        this.initRay(i);
       }
     }
 
-    function initRay(i) {
+    this.initRay = (i) => {
       let length, x, y1, y2, n, life, ttl, width, speed, hue;
 
       length = baseLength + rand(rangeLength);
@@ -92,15 +92,15 @@ export default {
       rayProps.set([x, y1, y2, life, ttl, width, speed, hue], i);
     }
 
-    function drawRays() {
+    this.drawRays = () => {
       let i;
 
       for (i = 0; i < rayPropsLength; i += rayPropCount) {
-        updateRay(i);
+        this.updateRay(i);
       }
     }
 
-    function updateRay(i) {
+    this.updateRay = (i) => {
       let i2 = 1 + i,
         i3 = 2 + i,
         i4 = 3 + i,
@@ -119,7 +119,7 @@ export default {
       speed = rayProps[i7];
       hue = rayProps[i8];
 
-      drawRay(x, y1, y2, life, ttl, width, hue);
+      this.drawRay(x, y1, y2, life, ttl, width, hue);
 
       x += speed;
       life++;
@@ -127,10 +127,10 @@ export default {
       rayProps[i] = x;
       rayProps[i4] = life;
 
-      (checkBounds(x) || life > ttl) && initRay(i);
+      (this.checkBounds(x) || life > ttl) && this.initRay(i);
     }
 
-    function drawRay(x, y1, y2, life, ttl, width, hue) {
+    this.drawRay = (x, y1, y2, life, ttl, width, hue) => {
       let gradient;
 
       gradient = ctx.a.createLinearGradient(x, y1, x, y2);
@@ -152,11 +152,11 @@ export default {
       ctx.a.restore();
     }
 
-    function checkBounds(x) {
+    this.checkBounds = (x) => {
       return x < 0 || x > canvas.a.width;
     }
 
-    function createCanvas() {
+    this.createCanvas = () => {
       container = document.querySelector(".content--canvas");
       canvas = {
         a: document.createElement("canvas"),
@@ -177,7 +177,7 @@ export default {
       center = [];
     }
 
-    function resize() {
+    this.resize = () => {
       const { innerWidth, innerHeight } = window;
 
       canvas.a.width = innerWidth;
@@ -194,7 +194,7 @@ export default {
       center[1] = 0.5 * canvas.a.height;
     }
 
-    function render() {
+    this.render = () => {
       ctx.b.save();
       ctx.b.filter = "blur(12px)";
       ctx.a.globalCompositeOperation = "lighter";
@@ -202,19 +202,28 @@ export default {
       ctx.b.restore();
     }
 
-    function draw() {
+    this.draw = () => {
       tick++;
       ctx.a.clearRect(0, 0, canvas.a.width, canvas.a.height);
       ctx.b.fillStyle = backgroundColor;
       ctx.b.fillRect(0, 0, canvas.b.width, canvas.a.height);
-      drawRays();
-      render();
+      this.drawRays();
+      this.render();
 
-      window.requestAnimationFrame(draw);
+      if (!this.cancel) {
+        window.requestAnimationFrame(this.draw);
+      }
     }
 
-    setup()
-//    window.addEventListener("resize", resize);
+    setTimeout(() => {
+      this.setup();
+    }, 100);
+
+    window.addEventListener("resize", this.resize);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.resize);
+    this.cancel = true;
   }
 };
 </script>

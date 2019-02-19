@@ -57,25 +57,25 @@ export default {
     let sizes;
     let hues;
 
-    function setup() {
-      createCanvas();
-      resize();
-      initParticles();
-      draw();
-    }
+    this.setup = () => {
+      this.createCanvas();
+      this.resize();
+      this.initParticles();
+      this.draw();
+    };
 
-    function initParticles() {
+    this.initParticles = () => {
       tick = 0;
       particleProps = new Float32Array(particlePropsLength);
 
       let i;
 
       for (i = 0; i < particlePropsLength; i += particlePropCount) {
-        initParticle(i);
+        this.initParticle(i);
       }
-    }
+    };
 
-    function initParticle(i) {
+    this.initParticle = i => {
       let theta, x, y, vx, vy, life, ttl, speed, size, hue;
 
       x = rand(canvas.a.width);
@@ -90,17 +90,17 @@ export default {
       hue = baseHue + rand(rangeHue);
 
       particleProps.set([x, y, vx, vy, life, ttl, speed, size, hue], i);
-    }
+    };
 
-    function drawParticles() {
+    this.drawParticles = () => {
       let i;
 
       for (i = 0; i < particlePropsLength; i += particlePropCount) {
-        updateParticle(i);
+        this.updateParticle(i);
       }
-    }
+    };
 
-    function updateParticle(i) {
+    this.updateParticle = i => {
       let i2 = 1 + i,
         i3 = 2 + i,
         i4 = 3 + i,
@@ -124,7 +124,7 @@ export default {
       size = particleProps[i8];
       hue = particleProps[i9];
 
-      drawParticle(x, y, theta, life, ttl, size, hue);
+      this.drawParticle(x, y, theta, life, ttl, size, hue);
 
       life++;
 
@@ -134,10 +134,10 @@ export default {
       particleProps[i4] = vy;
       particleProps[i5] = life;
 
-      life > ttl && initParticle(i);
-    }
+      life > ttl && this.initParticle(i);
+    };
 
-    function drawParticle(x, y, theta, life, ttl, size, hue) {
+    this.drawParticle = (x, y, theta, life, ttl, size, hue) => {
       let xRel = x - 0.5 * size,
         yRel = y - 0.5 * size;
 
@@ -152,9 +152,9 @@ export default {
       ctx.a.strokeRect(xRel, yRel, size, size);
       ctx.a.closePath();
       ctx.a.restore();
-    }
+    };
 
-    function createCanvas() {
+    this.createCanvas = () => {
       container = document.querySelector(".content--canvas");
       canvas = {
         a: document.createElement("canvas"),
@@ -173,9 +173,9 @@ export default {
         b: canvas.b.getContext("2d")
       };
       center = [];
-    }
+    };
 
-    function resize() {
+    this.resize = () => {
       const { innerWidth, innerHeight } = window;
 
       canvas.a.width = innerWidth;
@@ -190,9 +190,9 @@ export default {
 
       center[0] = 0.5 * canvas.a.width;
       center[1] = 0.5 * canvas.a.height;
-    }
+    };
 
-    function renderGlow() {
+    this.renderGlow = () => {
       ctx.b.save();
       ctx.b.filter = "blur(8px) brightness(200%)";
       ctx.b.globalCompositeOperation = "lighter";
@@ -204,16 +204,16 @@ export default {
       ctx.b.globalCompositeOperation = "lighter";
       ctx.b.drawImage(canvas.a, 0, 0);
       ctx.b.restore();
-    }
+    };
 
-    function render() {
+    this.render = () => {
       ctx.b.save();
       ctx.b.globalCompositeOperation = "lighter";
       ctx.b.drawImage(canvas.a, 0, 0);
       ctx.b.restore();
-    }
+    };
 
-    function draw() {
+    this.draw = () => {
       tick++;
       console.log("Draw");
 
@@ -222,20 +222,23 @@ export default {
       ctx.b.fillStyle = backgroundColor;
       ctx.b.fillRect(0, 0, canvas.a.width, canvas.a.height);
 
-      drawParticles();
-      renderGlow();
-      render();
+      this.drawParticles();
+      this.renderGlow();
+      this.render();
       if (!this.cancel) {
-        window.requestAnimationFrame(draw);
+        window.requestAnimationFrame(this.draw);
       }
-    }
+    };
 
-    setup();
+    setTimeout(() => {
+      this.setup();
+    }, 100);
 
-    //window.addEventListener("resize", resize);
+    window.addEventListener("resize", this.resize);
   },
   beforeDestroy() {
     this.cancel = true;
+    window.removeEventListener("resize", this.resize);
   }
 };
 </script>

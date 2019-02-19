@@ -8,7 +8,6 @@ import SimplexNoise from "simplex-noise";
 
 export default {
   mounted() {
-    
     const { PI, cos, sin, abs, sqrt, pow, round, random, atan2 } = Math;
     const HALF_PI = 0.5 * PI;
     const TAU = 2 * PI;
@@ -26,8 +25,6 @@ export default {
     const dist = (x1, y1, x2, y2) => sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
     const angle = (x1, y1, x2, y2) => atan2(y2 - y1, x2 - x1);
     const lerp = (n1, n2, speed) => (1 - speed) * n1 + speed * n2;
-
-    
 
     const pipeCount = 30;
     const pipePropCount = 8;
@@ -52,24 +49,24 @@ export default {
     let tick;
     let pipeProps;
 
-    function setup() {
-      createCanvas();
-      resize();
-      initPipes();
-      draw();
-    }
+    this.setup = () => {
+      this.createCanvas();
+      this.resize();
+      this.initPipes();
+      this.draw();
+    };
 
-    function initPipes() {
+    this.initPipes = () => {
       pipeProps = new Float32Array(pipePropsLength);
 
       let i;
 
       for (i = 0; i < pipePropsLength; i += pipePropCount) {
-        initPipe(i);
+        this.initPipe(i);
       }
-    }
+    };
 
-    function initPipe(i) {
+    this.initPipe = i => {
       let x, y, direction, speed, life, ttl, width, hue;
 
       x = rand(canvas.a.width);
@@ -82,19 +79,19 @@ export default {
       hue = baseHue + rand(rangeHue);
 
       pipeProps.set([x, y, direction, speed, life, ttl, width, hue], i);
-    }
+    };
 
-    function updatePipes() {
+    this.updatePipes = () => {
       tick++;
 
       let i;
 
       for (i = 0; i < pipePropsLength; i += pipePropCount) {
-        updatePipe(i);
+        this.updatePipe(i);
       }
-    }
+    };
 
-    function updatePipe(i) {
+    this.updatePipe = i => {
       let i2 = 1 + i,
         i3 = 2 + i,
         i4 = 3 + i,
@@ -113,7 +110,7 @@ export default {
       width = pipeProps[i7];
       hue = pipeProps[i8];
 
-      drawPipe(x, y, life, ttl, width, hue);
+      this.drawPipe(x, y, life, ttl, width, hue);
 
       life++;
       x += cos(direction) * speed;
@@ -129,11 +126,11 @@ export default {
       pipeProps[i3] = direction;
       pipeProps[i5] = life;
 
-      checkBounds(x, y);
-      life > ttl && initPipe(i);
-    }
+      this.checkBounds(x, y);
+      life > ttl && this.initPipe(i);
+    };
 
-    function drawPipe(x, y, life, ttl, width, hue) {
+    this.drawPipe = (x, y, life, ttl, width, hue) => {
       ctx.a.save();
       ctx.a.strokeStyle = `hsla(${hue},75%,50%,${fadeInOut(life, ttl) *
         0.125})`;
@@ -142,16 +139,16 @@ export default {
       ctx.a.stroke();
       ctx.a.closePath();
       ctx.a.restore();
-    }
+    };
 
-    function checkBounds(x, y) {
+    this.checkBounds = (x, y) => {
       if (x > canvas.a.width) x = 0;
       if (x < 0) x = canvas.a.width;
       if (y > canvas.a.height) y = 0;
       if (y < 0) y = canvas.a.height;
-    }
+    };
 
-    function createCanvas() {
+    this.createCanvas = () => {
       container = document.querySelector(".content--canvas");
       canvas = {
         a: document.createElement("canvas"),
@@ -171,9 +168,9 @@ export default {
       };
       center = [];
       tick = 0;
-    }
+    };
 
-    function resize() {
+    this.resize = () => {
       const { innerWidth, innerHeight } = window;
 
       canvas.a.width = innerWidth;
@@ -188,9 +185,9 @@ export default {
 
       center[0] = 0.5 * canvas.a.width;
       center[1] = 0.5 * canvas.a.height;
-    }
+    };
 
-    function render() {
+    this.render = () => {
       ctx.b.save();
       ctx.b.fillStyle = backgroundColor;
       ctx.b.fillRect(0, 0, canvas.b.width, canvas.b.height);
@@ -204,25 +201,27 @@ export default {
       ctx.b.save();
       ctx.b.drawImage(canvas.a, 0, 0);
       ctx.b.restore();
-    }
+    };
 
-    function draw() {
-      updatePipes();
+    this.draw = () => {
+      this.updatePipes();
 
-      render();
+      this.render();
+      if (!this.cancel) {
+        window.requestAnimationFrame(this.draw);
+      }
+    };
 
-      window.requestAnimationFrame(draw);
-    }
+    setTimeout(() => {
+      this.setup();
 
-    setup()
-    //window.addEventListener("resize", resize);
+      window.addEventListener("resize", this.resize);
+    }, 100);
   },
   beforeDestroy() {
-    
-    
-
+    window.removeEventListener("resize", this.resize);
+    this.cancel = true;
   }
-
 };
 </script>
 <style scoped>
