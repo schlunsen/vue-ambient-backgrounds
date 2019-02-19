@@ -215,7 +215,7 @@ export default {
 
     this.draw = () => {
       tick++;
-      console.log("Draw");
+      
 
       ctx.a.clearRect(0, 0, canvas.a.width, canvas.a.height);
 
