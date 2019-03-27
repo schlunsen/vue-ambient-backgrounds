@@ -16,7 +16,7 @@ Based on [https://github.com/crnacura/AmbientCanvasBackgrounds](https://github.c
     </div>
 </template>
 
-import Aurora from 'vue-ambient-backgrounds' 
+import Aurora from 'vue-ambient-backgrounds/src/components/Aurora.vue' 
 
 
 export default {

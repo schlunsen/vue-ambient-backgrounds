@@ -7,6 +7,7 @@
 import SimplexNoise from "simplex-noise";
 
 export default {
+  props: ['backgroundColor'],
   mounted() {
     const { PI, cos, sin, abs, sqrt, pow, round, random, atan2 } = Math;
     const HALF_PI = 0.5 * PI;
@@ -41,7 +42,7 @@ export default {
     const xOff = 0.0025;
     const yOff = 0.005;
     const zOff = 0.0005;
-    const backgroundColor = "hsla(60,50%,3%,1)";
+    const backgroundColor = this.backgroundColor;
 
     let container;
     let canvas;
